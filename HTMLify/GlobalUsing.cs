@@ -1,0 +1,1 @@
+﻿global using HTMLify.Presentation.ViewModels.Pages;

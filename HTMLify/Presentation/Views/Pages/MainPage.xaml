@@ -1,0 +1,107 @@
+﻿<Page
+    x:Class="HTMLify.Presentation.Views.Pages.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:vm="clr-namespace:HTMLify.Presentation.ViewModels.Pages"
+    Title="MainPage"
+    d:DesignHeight="400"
+    d:DesignWidth="500"
+    mc:Ignorable="d">
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  입력 폴더  -->
+        <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+            <ui:TextBox
+                Width="300"
+                Margin="0,0,10,0"
+                Text="{Binding InputFolder, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:Button Command="{Binding SelectInputFolderCommand}" Content="입력 폴더 선택" />
+        </StackPanel>
+
+        <!--  출력 폴더  -->
+        <StackPanel
+            Grid.Row="1"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+            <ui:TextBox
+                Width="300"
+                Margin="0,0,10,0"
+                Text="{Binding OutputFolder, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:Button Command="{Binding SelectOutputFolderCommand}" Content="출력 폴더 선택" />
+        </StackPanel>
+
+        <Grid Grid.Row="2" Margin="0,0,0,10">
+
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!--  변환 시작 버튼  -->
+                <ui:Button
+                    Grid.Column="0"
+                    Width="120"
+                    Height="35"
+                    HorizontalAlignment="Left"
+                    Command="{Binding ConvertFilesCommand}"
+                    Content="변환 시작" />
+
+                <!--  성공, 실패, 실패 목록 저장  -->
+                <StackPanel
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        Foreground="CadetBlue"
+                        Text="{Binding SuccessCount, StringFormat=성공: {0}개}" />
+
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        Foreground="Red"
+                        Text="{Binding FailureCount, StringFormat=실패: {0}개}" />
+
+                    <ui:Button
+                        Width="120"
+                        Height="35"
+                        Command="{Binding DownloadFailedFilesCommand}"
+                        Content="실패 목록 저장" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+
+        <!--  진행 바  -->
+        <ProgressBar
+            Grid.Row="3"
+            Height="15"
+            Margin="0,0,0,10"
+            Maximum="1"
+            Minimum="0"
+            Value="{Binding Progress}" />
+
+        <!--  로그 텍스트박스  -->
+        <ui:TextBox
+            Grid.Row="4"
+            AcceptsReturn="True"
+            IsReadOnly="True"
+            Text="{Binding Log}"
+            TextWrapping="Wrap"
+            VerticalScrollBarVisibility="Auto" />
+    </Grid>
+</Page>
