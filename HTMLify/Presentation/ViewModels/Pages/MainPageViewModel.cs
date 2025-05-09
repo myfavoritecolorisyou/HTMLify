@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using HTMLify.Application.Commands;
 using HTMLify.Application.Services;
-using HTMLify.Domain.Services;
 using HTMLify.Models.Pages;
 using HTMLify.Presentation.ViewModels;
 using MimeKit;
@@ -24,6 +23,7 @@ namespace HTMLify.Presentation.ViewModels.Pages
     {
         private readonly List<string> _failedFiles = [];
 
+        // 서비스 클래스를 App.xaml.cs에 등록해서 주입받아 사용
         private readonly AppSettingsService _appSettingsService;
         private readonly FileProccessingService _fileProccessingService;
 
@@ -108,9 +108,9 @@ namespace HTMLify.Presentation.ViewModels.Pages
 
                         if (Path.GetExtension(file).Equals(".mht", StringComparison.OrdinalIgnoreCase))
                         {
-                            string newFileName = $"{Path.GetFileNameWithoutExtension(relativePath)}.html";
-                            string newDirPath = Path.Combine(OutputFolder, newFileName);
-                            outputFilePath = Path.Combine(newFileName, newDirPath);
+                            string newFileName = Path.GetFileNameWithoutExtension(relativePath) + ".html";
+                            string newDirPath = Path.Combine(OutputFolder, Path.GetDirectoryName(relativePath) ?? "");
+                            outputFilePath = Path.Combine(newDirPath, newFileName);
 
                             if (!Directory.Exists(newDirPath))
                             {
@@ -143,6 +143,7 @@ namespace HTMLify.Presentation.ViewModels.Pages
                         FailureCount++;
                     }
 
+                    // 로그 버퍼를 일정 주기로 UI에 업데이트
                     if (logBuffer.Count >= 10 || i == allFiles.Length - 1)
                     {
                         var batch = string.Join("\n", logBuffer);

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HTMLify.Application.Services;
 using HTMLify.Models.Pages;
 using HTMLify.Presentation.ViewModels;
 using Microsoft.Win32;
@@ -12,12 +13,14 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using WindowsAPICodePack.Dialogs;
 
 namespace HTMLify.Presentation.ViewModels.Pages
 {
     public partial class PreviewPageViewModel : BaseViewModel
     {
         private const string _FileStoragePath = "fileList.json";
+        private FileProccessingService _fileProccessingService;
 
         [ObservableProperty]
         private ObservableCollection<FileItem> _files = [];
@@ -28,8 +31,11 @@ namespace HTMLify.Presentation.ViewModels.Pages
         [ObservableProperty]
         public Uri? _selectedFilePath;
 
-        public PreviewPageViewModel()
+        public PreviewPageViewModel(
+            FileProccessingService fileProccessingService)
         {
+            _fileProccessingService = fileProccessingService;
+
             LoadFiles();
 
             PropertyChanged += (s, e) =>
@@ -43,15 +49,23 @@ namespace HTMLify.Presentation.ViewModels.Pages
                 {
                     if (SelectedFile is not null)
                     {
-                        SelectedFilePath = new Uri($"file:///{SelectedFile.FullPath.Replace("\\", "/")}");
+                        if (Path.GetExtension(SelectedFile.FullPath).Equals(".mht", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var htmlPath = fileProccessingService.ConvertMhtToHtml(SelectedFile.FullPath);
+                            SelectedFilePath = new Uri($"file:///{htmlPath.Replace("\\", "/")}");
+                        }
+                        else
+                        {
+                            SelectedFilePath = new Uri($"file:///{SelectedFile.FullPath.Replace("\\", "/")}");
+                        }
                     }
                     else
                     {
-                        _selectedFilePath = null;
+                        SelectedFilePath = null;
                     }
                 }
             };
-        } // default constructor
+        } // constructor
 
         [RelayCommand]
         private void AddFile()
@@ -91,14 +105,6 @@ namespace HTMLify.Presentation.ViewModels.Pages
             }
         } // RemoveFiles()
 
-        [RelayCommand(CanExecute = nameof(CanRemoveFile))]
-        private void RemoveAllFiles()
-        {
-            Files.Clear();
-            SelectedFile = null;
-            SaveFiles();
-        } // RemoveFiles()
-
         private void SaveFiles()
         {
             var json = JsonSerializer.Serialize(Files);
@@ -114,7 +120,7 @@ namespace HTMLify.Presentation.ViewModels.Pages
 
                 if (fileItems is not null)
                 {
-                    Files = new ObservableCollection<FileItem>(fileItems);
+                    Files = [.. fileItems];
                 }    
             }
         }

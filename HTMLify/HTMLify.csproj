@@ -8,7 +8,26 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
-  <ItemGroup>
+	<PropertyGroup>
+		<PublishSingleFile>true</PublishSingleFile>
+		<SelfContained>true</SelfContained>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<PublishTrimmed>false</PublishTrimmed>
+		<ApplicationIcon>sticker_icon_264913.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\sticker_icon.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="sticker_icon_264913.ico" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3179.45" />
@@ -19,6 +38,10 @@
 
   <ItemGroup>
     <Folder Include="Entities\Windows\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\sticker_icon.ico" />
   </ItemGroup>
 
 </Project>
