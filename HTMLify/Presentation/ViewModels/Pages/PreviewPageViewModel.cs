@@ -19,7 +19,11 @@ namespace HTMLify.Presentation.ViewModels.Pages
 {
     public partial class PreviewPageViewModel : BaseViewModel
     {
-        private const string _FileStoragePath = "fileList.json";
+        private static readonly string _FileStoragePath = 
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "HTMLify",
+                "fileList.json");
+
         private FileProccessingService _fileProccessingService;
 
         [ObservableProperty]
@@ -107,6 +111,12 @@ namespace HTMLify.Presentation.ViewModels.Pages
 
         private void SaveFiles()
         {
+            var dir = Path.GetDirectoryName(_FileStoragePath);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir!);
+            }
+
             var json = JsonSerializer.Serialize(Files);
             File.WriteAllText(_FileStoragePath, json);
         }

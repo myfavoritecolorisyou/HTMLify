@@ -13,7 +13,10 @@ namespace HTMLify.Application.Services
     {
         public string ConvertMhtToHtml(string mhtPath)
         {
-            var htmlTempFolder = Path.Combine(Path.GetTempPath(), "HTMLify", "Preview");
+            var htmlTempFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "HTMLify", "TempHtmlPreview");
+
             Directory.CreateDirectory(htmlTempFolder);
 
             var htmlFileName = Path.GetFileNameWithoutExtension(mhtPath) + ".html";
